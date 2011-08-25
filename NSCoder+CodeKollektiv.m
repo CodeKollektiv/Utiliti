@@ -36,7 +36,7 @@
 - (void) ck_encodeCATransform3D:(CATransform3D)transform forKey:(NSString *)key
 {
     NSString *transformAsString = [NSString stringWithFormat:
-                                   @"%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f",
+                                   @"[%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f]",
                                    transform.m11,
                                    transform.m12,
                                    transform.m13,
@@ -60,25 +60,31 @@
 
 - (CATransform3D) ck_decodeCATransform3DForKey:(NSString *)key
 {
-    NSArray *transformAsArray = [(NSString *)[self decodeObjectForKey:key] componentsSeparatedByString:@", "];
+    NSString *transformAsString = [self decodeObjectForKey:key];
+    
+    // Strip parentheses
+    NSRange range = {1, [transformAsString length] - 2};
+    transformAsString = [transformAsString substringWithRange:range];
+    
+    NSArray *transformAsArray = [transformAsString componentsSeparatedByString:@", "];
     
     CATransform3D transform = {
-        [(NSString *)[transformAsArray objectAtIndex:0] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:1] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:2] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:3] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:4] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:5] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:6] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:7] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:8] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:9] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:10] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:11] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:12] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:13] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:14] floatValue],
-        [(NSString *)[transformAsArray objectAtIndex:15] floatValue]
+        .m11 = [[transformAsArray objectAtIndex:0] floatValue],
+        .m12 = [[transformAsArray objectAtIndex:1] floatValue],
+        .m13 = [[transformAsArray objectAtIndex:2] floatValue],
+        .m14 = [[transformAsArray objectAtIndex:3] floatValue],
+        .m21 = [[transformAsArray objectAtIndex:4] floatValue],
+        .m22 = [[transformAsArray objectAtIndex:5] floatValue],
+        .m23 = [[transformAsArray objectAtIndex:6] floatValue],
+        .m24 = [[transformAsArray objectAtIndex:7] floatValue],
+        .m31 = [[transformAsArray objectAtIndex:8] floatValue],
+        .m32 = [[transformAsArray objectAtIndex:9] floatValue],
+        .m33 = [[transformAsArray objectAtIndex:10] floatValue],
+        .m34 = [[transformAsArray objectAtIndex:11] floatValue],
+        .m41 = [[transformAsArray objectAtIndex:12] floatValue],
+        .m42 = [[transformAsArray objectAtIndex:13] floatValue],
+        .m43 = [[transformAsArray objectAtIndex:14] floatValue],
+        .m44 = [[transformAsArray objectAtIndex:15] floatValue]
     };
     return transform;
 }
